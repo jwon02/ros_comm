@@ -7,7 +7,7 @@ if(NOT WIN32)
 endif()
 
 find_package(console_bridge REQUIRED)
-find_package(catkin REQUIRED COMPONENTS cpp_common roscpp_serialization roscpp_traits rostime roslz4)
+find_package(catkin REQUIRED COMPONENTS cpp_common pluginlib roscpp_serialization roscpp_traits rostime roslz4)
 find_package(Boost REQUIRED COMPONENTS date_time filesystem program_options regex)
 find_package(BZip2 REQUIRED)
 
@@ -25,12 +25,14 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${console_bridge_INCLUDE_DIRS
 add_definitions(${BZIP2_DEFINITIONS})
 
 add_library(rosbag_storage
+  src/aes_encryptor.cpp
   src/bag.cpp
   src/bag_player.cpp
   src/buffer.cpp
   src/bz2_stream.cpp
   src/lz4_stream.cpp
   src/chunked_file.cpp
+  src/encryptor.cpp
   src/message_instance.cpp
   src/query.cpp
   src/stream.cpp
@@ -38,7 +40,7 @@ add_library(rosbag_storage
   src/uncompressed_stream.cpp
 )
 
-target_link_libraries(rosbag_storage ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} ${console_bridge_LIBRARIES})
+target_link_libraries(rosbag_storage ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} ${console_bridge_LIBRARIES} crypto gpgme)
 
 install(TARGETS rosbag_storage
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -49,4 +51,8 @@ install(TARGETS rosbag_storage
 install(DIRECTORY include/
   DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
+)
+
+install(FILES encryptor_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

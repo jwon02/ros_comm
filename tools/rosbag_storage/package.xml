@@ -30,5 +30,6 @@
 
   <export>
     <rosdoc config="${prefix}/rosdoc.yaml"/>
+    <rosbag_storage plugin="${prefix}/encryptor_plugins.xml" />
   </export>
 </package>
